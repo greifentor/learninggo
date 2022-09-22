@@ -71,8 +71,3 @@ func ReadList(proxy string, path string) (*[]string, error) {
 
 	return &r, err
 }
-
-func main() {
-	li, _ := ReadList("proxy.golang.org", "golang.org/x/text")
-	fmt.Printf("???: %#v", *li)
-}
