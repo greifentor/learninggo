@@ -3,15 +3,17 @@ package main
 import (
 	"encoding/json"
 	"fmt"
+	"io"
 	"net/http"
+	"strings"
 )
 
-type LatestInfo struct {
+type VersionInfo struct {
 	Version string
 	Time    string
 }
 
-func ReadLatest(proxy string, path string) (*LatestInfo, error) {
+func ReadLatest(proxy string, path string) (*VersionInfo, error) {
 	resp, err := http.Get("https://" + proxy + "/" + path + "/@latest")
 
 	if err != nil {
@@ -19,11 +21,11 @@ func ReadLatest(proxy string, path string) (*LatestInfo, error) {
 		return nil, err
 	}
 
-	var li LatestInfo
+	var vi VersionInfo
 
-	err = json.NewDecoder(resp.Body).Decode(&li)
+	err = json.NewDecoder(resp.Body).Decode(&vi)
 
-	return &li, err
+	return &vi, err
 
 }
 
@@ -37,3 +39,40 @@ func ReadLatest(proxy string, path string) (*LatestInfo, error) {
    Write a unit test.
 
 */
+
+func ReadInfo(proxy string, path string, version string) (*VersionInfo, error) {
+	resp, err := http.Get("https://" + proxy + "/" + path + "/@v/" + version + ".info")
+
+	if err != nil {
+		fmt.Printf("error while GET operation: %#v\n", err)
+		return nil, err
+	}
+
+	var vi VersionInfo
+
+	err = json.NewDecoder(resp.Body).Decode(&vi)
+
+	return &vi, err
+
+}
+
+func ReadList(proxy string, path string) (*[]string, error) {
+	resp, err := http.Get("https://" + proxy + "/" + path + "/@v/list")
+
+	if err != nil {
+		fmt.Printf("error while GET operation: %#v\n", err)
+		return nil, err
+	}
+
+	defer resp.Body.Close()
+	body, err := io.ReadAll(resp.Body)
+
+	var r = strings.Split(string(body), "\n")
+
+	return &r, err
+}
+
+func main() {
+	li, _ := ReadList("proxy.golang.org", "golang.org/x/text")
+	fmt.Printf("???: %#v", *li)
+}
