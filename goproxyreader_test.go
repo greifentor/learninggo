@@ -11,10 +11,7 @@ func TestHappyRunReadLatest(t *testing.T) {
 		t.Errorf("no error expected but caught one: %#v", err)
 	}
 
-	var expected = "v0.3.7"
-	if li.Version != expected {
-		t.Errorf("expected <%s>, but was <%s>", li.Version, expected)
-	}
+	assertEquals("v0.3.7", li.Version, t)
 }
 
 func TestHappyRunReadInfo(t *testing.T) {
@@ -24,10 +21,7 @@ func TestHappyRunReadInfo(t *testing.T) {
 		t.Errorf("no error expected but caught one: %#v", err)
 	}
 
-	var expected = "v0.3.7"
-	if li.Version != expected {
-		t.Errorf("expected <%s>, but was <%s>", li.Version, expected)
-	}
+	assertEquals("v0.3.7", li.Version, t)
 }
 
 func TestHappyRunReadList(t *testing.T) {
@@ -37,12 +31,15 @@ func TestHappyRunReadList(t *testing.T) {
 		t.Errorf("no error expected but caught one: %#v", err)
 	}
 
-	var expected = "v0.3.0"
-
 	var li = *lip
 
-	if li[0] != expected {
-		t.Errorf("expected <%s>, but was <%s>", li[0], expected)
-	}
+	assertEquals("v0.3.0", li[0], t)
 
+}
+
+func assertEquals(expected string, current string, t *testing.T) {
+
+	if expected != current {
+		t.Errorf("expected <%s>, but was <%s>", expected, current)
+	}
 }
